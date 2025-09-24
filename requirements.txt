@@ -1,3 +1,5 @@
 typer
 opencv-python
 numpy
+matplotlib
+seaborn
