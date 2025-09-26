@@ -1,4 +1,5 @@
 import cv2
+import os
 import numpy as np
 import typer
 from typing_extensions import Annotated
@@ -9,7 +10,7 @@ def seamless_checker(
     ],
     output_video_path: Annotated[
         str, typer.Argument(help="Path to save the output video")
-    ] = "output.mp4",
+    ] = "output/output.mp4",
     fps: Annotated[
         int, typer.Option(help="Frames per second for the output video")
     ] = 30,
@@ -24,6 +25,7 @@ def seamless_checker(
     Creates a video demonstrating the seamlessness of an image by iteratively
     offsetting it in both x and y directions simultaneously based on percentage.
     """
+    os.makedirs(os.path.dirname(output_video_path), exist_ok=True)
     try:
         # Load the image
         image = cv2.imread(image_path)

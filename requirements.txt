@@ -1,5 +1,9 @@
 typer
 opencv-python
-numpy
+numpy<2
 matplotlib
 seaborn
+jupyter
+tqdm
+einops
+scipy
