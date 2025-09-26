@@ -9,7 +9,7 @@ import torch.distributions as D
 
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-import matplotlib as cm
+import matplotlib.cm as cm
 from matplotlib.axes import Axes
 from matplotlib.animation import FuncAnimation
 import seaborn as sns
@@ -260,7 +260,7 @@ def plot_path(path, ts: torch.Tensor, ax: Optional[Axes] = None):
     path_num = path.shape[1] # (time, path_num, dim)
     for i in range(path_num):
         y_data = path[:, i, 0]
-        ax.plot(ts.cpu(), y_data.cpu(), lw=2, label=f'Path {i+1}')
+        ax.plot(ts.cpu(), y_data.cpu(), lw=3, label=f'Path {i+1}')
 
 def plot_path_animation(path, ts: torch.Tensor, fig: plt.Figure, ax: Optional[Axes] = None):
     plt.rcParams['animation.embed_limit'] = 2**128    
@@ -269,20 +269,23 @@ def plot_path_animation(path, ts: torch.Tensor, fig: plt.Figure, ax: Optional[Ax
     timesteps, path_num = path.shape[:2] # (time, path_num, dim)
     path = path.cpu()
     ts = ts.cpu()
-    
+
+    line_cmap = cm.get_cmap('Paired', path_num) # Get a colormap with enough distinct colors
+
     # Initialize lines and separate marker objects
     lines = []
     markers = [] # List to hold our marker objects
     for i in range(path_num):
         # Main line for the path
-        line_obj, = ax.plot([], [], lw=2, label=f'Path {i+1}')
+        line_color = line_cmap(i)
+        line_obj, = ax.plot([], [], lw=4, label=f'Path {i+1}', color=line_color)
         lines.append(line_obj)
 
         # Marker for the current point of this path
         # Use a specific marker style (e.g., 'o' for circle), size, and color
         # The color will be inherited from the line's color if you don't specify,
         # or you can explicitly set it to match the line.
-        marker_obj, = ax.plot([], [], 'o', markersize=8, color=line_obj.get_color())
+        marker_obj, = ax.plot([], [], 'o', markersize=10, color=line_obj.get_color())
         markers.append(marker_obj)
 
     # --- Define the initialization function ---
@@ -348,9 +351,9 @@ def plot_heatmap(path, ts, ax: Optional[Axes] = None, bins=200, y_min = -15.0, y
     # 'cmap' sets the color scheme (e.g., 'viridis', 'hot', 'Blues')
     # 'alpha' makes it slightly transparent so grid lines/labels are visible
     # 'zorder=0' ensures it stays in the very background
-    original_cmap = plt.cm.Oranges
-    num_colors = 256  # Number of colors in the colormap
-    colors = original_cmap(np.linspace(0, 0.5, num_colors)) # Takes colors from 0 to 0.5 of the original range
-    new_cmap = mcolors.ListedColormap(colors)
-    heatmap = ax.pcolormesh(xedges, yedges, H_smoothed, cmap=new_cmap, alpha=0.8, zorder=0)
+    #original_cmap = plt.cm.Oranges
+    #num_colors = 256  # Number of colors in the colormap
+    #colors = original_cmap(np.linspace(0, 0.5, num_colors)) # Takes colors from 0 to 0.5 of the original range
+    #new_cmap = mcolors.ListedColormap(colors)
+    heatmap = ax.pcolormesh(xedges, yedges, H_smoothed, cmap='viridis', alpha=1.0, zorder=0)
     return heatmap, H_normalized
