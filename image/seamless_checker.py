@@ -20,6 +20,15 @@ def seamless_checker(
             help="The percentage step for each offset increment (e.g., 1 for 1%)."
         ),
     ] = 1.0,
+    max_offset_percentage: Annotated[
+        float,
+        typer.Option(
+            help="The maximum percentage offset for the image (e.g., 100 for 100%)."
+        ),
+    ] = 100.0,
+    tilling_num: Annotated[
+        int, typer.Option(help="The number of times to tile the image")
+    ] = 2,
 ):
     """
     Creates a video demonstrating the seamlessness of an image by iteratively
@@ -34,8 +43,12 @@ def seamless_checker(
             raise typer.Exit(code=1)
 
         height, width, _ = image.shape
-        max_offset_x = width // 2
-        max_offset_y = height // 2
+        if tilling_num > 1:
+            image = np.tile(image, (tilling_num, tilling_num, 1))
+            height, width, _ = image.shape
+            
+        max_offset_x = int(width * max_offset_percentage / 100)
+        max_offset_y = int(height * max_offset_percentage / 100)
 
         # Define the codec and create VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*'MP4V')
